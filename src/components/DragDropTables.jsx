@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Checkbox,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Checkbox, Tooltip
 } from '@mui/material';
 
 import { Visibility } from '@mui/icons-material';
 
-
-const leftTableData = [
-  { pid: '', id:1, description: 'description 1', startdate: '07/11/23', enddate: '17/09/25', pred: ''},
-  { pid: '',  id:2, description: 'description 2', startdate: '08/01/23', enddate: '15/12/24', pred: '1' },
-  { pid: '', id: 3, description: 'description 3', startdate: '23/10/23', enddate: '14/12/24', pred: '' },
-  { pid: '', id:4, description: 'description 4', startdate: '05/11/23', enddate: '19/12/25', pred: '1' },
-];
-const rightTableData = [
-  { id: '0.11',  item: 'Item 1' },
-  { id: '2.3453', item: 'Item 2' },
-  { id: '1.333', item: 'Item 3' },
-  { id: '01.02', item: 'Item 4' },
-  { id: '03.4 23', item: 'Item 5' },
-
-];
-
+import { leftTableData, rightTableData } from './data';
 
 const DragDropTables = () => {
+
   const [rightRows, setRightRows] = useState(() => {
     const stored = localStorage.getItem('rightTableData');
     return stored ? JSON.parse(stored) : rightTableData;
@@ -53,7 +39,7 @@ const DragDropTables = () => {
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault(); // Allows dropping
+    e.preventDefault(); 
   };
 
   const handleDrop = (e, targetRow) => {
@@ -62,7 +48,8 @@ const DragDropTables = () => {
     setRightRows(newRightRows);
 
     let newLeftRows = leftRows.map(el => 
-      {return (el.id ==targetRow.id)?  {...el, pid: el.pid !="" ? `${el.pid}, ${data.id}`: data.id} : el })
+      {return (el.id ==targetRow.id)?  {...el, pid: el.pid !="" ? `${el.pid}, ${data.id}`: data.id,
+      hint: el.hint !="" ? `${el.hint}, ${data.item}`: data.item} : el })
      setLeftRows(newLeftRows)
   };
 
@@ -90,7 +77,9 @@ const DragDropTables = () => {
                 onDrop={(e) => handleDrop(e, row)}
                 sx={{ cursor: 'pointer' }}
               >
+                <Tooltip title={`${row.hint}`} arrow>
                 <TableCell  sx={{backgroundColor: 'grey.300', padding: '4px' }}>{row.pid}</TableCell>
+                </Tooltip>
                 <TableCell>{row.description}</TableCell>
                 <TableCell><Checkbox/></TableCell>
                 <TableCell><Visibility /></TableCell>
