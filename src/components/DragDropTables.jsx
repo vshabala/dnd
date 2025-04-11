@@ -11,6 +11,8 @@ import {
   Button,
   Checkbox,
   Tooltip,
+  Snackbar,
+  SnackbarContent,
 } from "@mui/material";
 
 import { styled } from "@mui/material/styles";
@@ -35,6 +37,8 @@ const DragDropTables = () => {
     const stored = localStorage.getItem("leftTableData");
     return stored ? JSON.parse(stored) : leftTableData;
   });
+
+  const [confirm, setConfirm] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("rightTableData", JSON.stringify(rightRows));
@@ -71,6 +75,10 @@ const DragDropTables = () => {
         : el;
     });
     setLeftRows(newLeftRows);
+    setConfirm(true);
+  };
+  const handleClose = () => {
+    setConfirm(false);
   };
 
   return (
@@ -84,6 +92,17 @@ const DragDropTables = () => {
       }}
     >
       <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
+        <Snackbar open={confirm} autoHideDuration={3000} onClose={handleClose}>
+          <SnackbarContent
+            message="Id has been added"
+            sx={{
+              backgroundColor: "success.main",
+              color: "white",
+              padding: "6px 10px",
+              borderRadius: "8px",
+            }}
+          />
+        </Snackbar>
         <TableContainer component={Paper} sx={{ flex: "1.618" }}>
           <Table>
             <TableHead>
