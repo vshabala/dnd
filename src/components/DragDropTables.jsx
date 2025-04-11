@@ -13,9 +13,18 @@ import {
   Tooltip,
 } from "@mui/material";
 
+import { styled } from '@mui/material/styles';
 import { Visibility } from "@mui/icons-material";
-
 import { leftTableData, rightTableData } from "./data";
+
+const HeaderRow = styled(TableRow)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  '& th': {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+}));
+
 
 const DragDropTables = () => {
   const [rightRows, setRightRows] = useState(() => {
@@ -68,6 +77,8 @@ const DragDropTables = () => {
     setLeftRows(newLeftRows);
   };
 
+
+
   return (
     <Box
       sx={{
@@ -81,16 +92,16 @@ const DragDropTables = () => {
       <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
         <TableContainer component={Paper} sx={{ flex: "1.618" }}>
           <Table>
-            <TableHead sx={{ color: "#fff" }}>
-              <TableRow sx={{ backgroundColor: "primary.main" }}>
-                <TableCell sx={{ color: "white" }}>ID</TableCell>
-                <TableCell sx={{ color: "white" }}>Description</TableCell>
-                <TableCell sx={{ color: "white" }}>Select</TableCell>
-                <TableCell sx={{ color: "white" }}>Isolate</TableCell>
-                <TableCell sx={{ color: "white" }}>Start Date</TableCell>
-                <TableCell sx={{ color: "white" }}>End Date</TableCell>
-                <TableCell sx={{ color: "white" }}>Predecessors</TableCell>
-              </TableRow>
+            <TableHead>
+            <HeaderRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Select</TableCell>
+                <TableCell>Isolate</TableCell>
+                <TableCell>Start Date</TableCell>
+                <TableCell>End Date</TableCell>
+                <TableCell >Predecessors N.</TableCell>
+              </HeaderRow>
             </TableHead>
             <TableBody>
               {leftRows.map((row) => (
@@ -101,9 +112,7 @@ const DragDropTables = () => {
                   sx={{ cursor: "pointer" }}
                 >
                   <Tooltip title={`${row.hint}`} arrow>
-                    <TableCell
-                      sx={{ backgroundColor: "grey.300", padding: "4px" }}
-                    >
+                    <TableCell sx={{ backgroundColor: "grey.300",  padding: "4px" }}>
                       {row.pid}
                     </TableCell>
                   </Tooltip>
@@ -127,10 +136,10 @@ const DragDropTables = () => {
         <TableContainer component={Paper} sx={{ flex: 1 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: "primary.main" }}>
-                <TableCell sx={{ color: "white" }}>Item</TableCell>
-                <TableCell sx={{ color: "white" }}>ID</TableCell>
-              </TableRow>
+            <HeaderRow>
+                <TableCell>Item</TableCell>
+                <TableCell>ID</TableCell>
+              </HeaderRow>
             </TableHead>
             <TableBody>
               {rightRows.map((row) => (
