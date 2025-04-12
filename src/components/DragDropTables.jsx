@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import {
   Table,
   TableBody,
@@ -13,11 +13,11 @@ import {
   Tooltip,
   Snackbar,
   SnackbarContent,
-} from "@mui/material";
+} from "@mui/material"
 
-import { styled } from "@mui/material/styles";
-import { Visibility } from "@mui/icons-material";
-import { leftTableData, rightTableData } from "./data";
+import { styled } from "@mui/material/styles"
+import { Visibility } from "@mui/icons-material"
+import { leftTableData, rightTableData } from "./data"
 
 const HeaderRow = styled(TableRow)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -25,44 +25,42 @@ const HeaderRow = styled(TableRow)(({ theme }) => ({
     color: "white",
     fontWeight: "bold",
   },
-}));
+}))
 
-const useStored = (name, defaultValue ) => {
-    const stored = localStorage.getItem(name);
-    const initialValue =  stored ? JSON.parse(stored) : defaultValue;
-    const [value, setValue] = useState(initialValue);
-    useEffect(() => {
-      localStorage.setItem(name, JSON.stringify(value))
-    }, [value]);
-   return [value, setValue];
+const useStored = (name, defaultValue) => {
+  const stored = localStorage.getItem(name)
+  const initialValue = stored ? JSON.parse(stored) : defaultValue
+  const [value, setValue] = useState(initialValue)
+  useEffect(() => {
+    localStorage.setItem(name, JSON.stringify(value))
+  }, [value])
+  return [value, setValue]
 }
 
 const DragDropTables = () => {
-
-  const [rightRows, setRightRows] = useStored("rightTableData", rightTableData);
-  const [leftRows, setLeftRows] = useStored("leftTableData", leftTableData);
-  const [confirm, setConfirm] = useState(false);
- 
+  const [rightRows, setRightRows] = useStored("rightTableData", rightTableData)
+  const [leftRows, setLeftRows] = useStored("leftTableData", leftTableData)
+  const [confirm, setConfirm] = useState(false)
 
   const handleDragStart = (e, row) => {
-    e.dataTransfer.setData("application/json", JSON.stringify(row));
-  };
- 
+    e.dataTransfer.setData("application/json", JSON.stringify(row))
+  }
+
   const handleReset = () => {
-    localStorage.removeItem("rightTableData");
-    setRightRows(rightTableData);
-    localStorage.removeItem("leftTableData");
-    setLeftRows(leftTableData);
-  };
+    localStorage.removeItem("rightTableData")
+    setRightRows(rightTableData)
+    localStorage.removeItem("leftTableData")
+    setLeftRows(leftTableData)
+  }
 
   const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   const handleDrop = (e, targetRow) => {
-    const data = JSON.parse(e.dataTransfer.getData("application/json"));
-    let newRightRows = rightRows.filter((el) => el.id != data.id);
-    setRightRows(newRightRows);
+    const data = JSON.parse(e.dataTransfer.getData("application/json"))
+    let newRightRows = rightRows.filter((el) => el.id != data.id)
+    setRightRows(newRightRows)
 
     let newLeftRows = leftRows.map((el) => {
       return el.id == targetRow.id
@@ -71,14 +69,14 @@ const DragDropTables = () => {
             pid: el.pid != "" ? `${el.pid}, ${data.id}` : data.id,
             hint: el.hint != "" ? `${el.hint}, ${data.item}` : data.item,
           }
-        : el;
-    });
-    setLeftRows(newLeftRows);
-    setConfirm(true);
-  };
+        : el
+    })
+    setLeftRows(newLeftRows)
+    setConfirm(true)
+  }
   const handleClose = () => {
-    setConfirm(false);
-  };
+    setConfirm(false)
+  }
 
   return (
     <Box
@@ -175,7 +173,7 @@ const DragDropTables = () => {
         Reset Tables
       </Button>
     </Box>
-  );
-};
+  )
+}
 
-export default DragDropTables;
+export default DragDropTables

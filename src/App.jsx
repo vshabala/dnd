@@ -1,5 +1,5 @@
-import "./App.css";
-import DragDropTables from "./components/DragDropTables";
+import "./App.css"
+import DragDropTables from "./components/DragDropTables"
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       </p>
       <DragDropTables />
     </>
-  );
+  )
 }
 
-export default App;
+export default App

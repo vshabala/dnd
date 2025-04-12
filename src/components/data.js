@@ -35,11 +35,11 @@ export const leftTableData = [
     enddate: "19/12/25",
     pred: "1",
   },
-];
+]
 export const rightTableData = [
   { id: "0.11", item: "Item 1" },
   { id: "2.3453", item: "Item 2" },
   { id: "1.333", item: "Item 3" },
   { id: "01.02", item: "Item 4" },
   { id: "03.4 23", item: "Item 5" },
-];
+]
