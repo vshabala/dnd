@@ -40,17 +40,34 @@ const useStored = (name, defaultValue) => {
 const DragDropTables = () => {
   const [rightRows, setRightRows] = useStored("rightTableData", rightTableData)
   const [leftRows, setLeftRows] = useStored("leftTableData", leftTableData)
+  const [movedItems, setMovedItems] = useStored("movedItems", [])
   const [confirm, setConfirm] = useState(false)
 
   const handleDragStart = (e, row) => {
     e.dataTransfer.setData("application/json", JSON.stringify(row))
   }
 
-  const handleReset = () => {
-    localStorage.removeItem("rightTableData")
-    setRightRows(rightTableData)
-    localStorage.removeItem("leftTableData")
-    setLeftRows(leftTableData)
+  const handleUndo = () => {
+    const newMovedItems = [...movedItems]
+    const step = newMovedItems.pop()
+    const { number, target_id, ...row } = step
+    setMovedItems(newMovedItems)
+
+    const newRightRows = [...rightRows]
+    newRightRows.splice(number, 0, row)
+    setRightRows(newRightRows)
+
+    const newLeftRows = leftRows.map((el) => {
+      if (el.id === target_id) {
+        return {
+          ...el,
+          pid: el.pid.filter((val) => val !== row.id),
+          hint: el.hint.filter((val) => val !== row.item),
+        }
+      }
+      return el
+    })
+    setLeftRows(newLeftRows)
   }
 
   const handleDragOver = (e) => {
@@ -66,12 +83,16 @@ const DragDropTables = () => {
       return el.id == targetRow.id
         ? {
             ...el,
-            pid: el.pid != "" ? `${el.pid}, ${data.id}` : data.id,
-            hint: el.hint != "" ? `${el.hint}, ${data.item}` : data.item,
+            pid: Array.isArray(el.pid) ? [...el.pid, data.id] : [data.id],
+            hint: Array.isArray(el.hint)
+              ? [...el.hint, data.item]
+              : [data.item],
           }
         : el
     })
     setLeftRows(newLeftRows)
+    const newMovedItems = [...movedItems, { ...data, target_id: targetRow.id }]
+    setMovedItems(newMovedItems)
     setConfirm(true)
   }
   const handleClose = () => {
@@ -88,6 +109,27 @@ const DragDropTables = () => {
         p: 1,
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          justifyContent: "flex-end",
+          width: "100%",
+          p: 0.5,
+        }}
+      >
+        <Button
+          variant="contained"
+          onClick={handleUndo}
+          sx={{
+            mt: 2,
+            opacity: movedItems.length > 0 ? 1 : 0.5,
+            transition: "opacity 0.5s",
+          }}
+        >
+          Undo
+        </Button>
+      </Box>
       <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
         <Snackbar open={confirm} autoHideDuration={3000} onClose={handleClose}>
           <SnackbarContent
@@ -119,13 +161,15 @@ const DragDropTables = () => {
                   key={row.id}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, row)}
-                  sx={{ cursor: "pointer" }}
                 >
-                  <Tooltip title={`${row.hint}`} arrow>
+                  <Tooltip
+                    title={Array.isArray(row.hint) && row.hint.join(", ")}
+                    arrow
+                  >
                     <TableCell
                       sx={{ backgroundColor: "grey.300", padding: "4px" }}
                     >
-                      {row.pid}
+                      {Array.isArray(row.pid) && row.pid.join(", ")}
                     </TableCell>
                   </Tooltip>
                   <TableCell>{row.description}</TableCell>
@@ -154,11 +198,13 @@ const DragDropTables = () => {
               </HeaderRow>
             </TableHead>
             <TableBody>
-              {rightRows.map((row) => (
+              {rightRows.map((row, index) => (
                 <TableRow
                   key={row.id}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, row)}
+                  onDragStart={(e) =>
+                    handleDragStart(e, { ...row, number: index })
+                  }
                   sx={{ cursor: "grab" }}
                 >
                   <TableCell>{row.item}</TableCell>
@@ -169,9 +215,6 @@ const DragDropTables = () => {
           </Table>
         </TableContainer>
       </Box>
-      <Button variant="contained" onClick={handleReset} sx={{ mt: 4 }}>
-        Reset Tables
-      </Button>
     </Box>
   )
 }
