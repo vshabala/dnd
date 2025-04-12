@@ -27,28 +27,27 @@ const HeaderRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const useStored = (name, defaultValue ) => {
+    const stored = localStorage.getItem(name);
+    const initialValue =  stored ? JSON.parse(stored) : defaultValue;
+    const [value, setValue] = useState(initialValue);
+    useEffect(() => {
+      localStorage.setItem(name, JSON.stringify(value))
+    }, [value]);
+   return [value, setValue];
+}
+
 const DragDropTables = () => {
-  const [rightRows, setRightRows] = useState(() => {
-    const stored = localStorage.getItem("rightTableData");
-    return stored ? JSON.parse(stored) : rightTableData;
-  });
 
-  const [leftRows, setLeftRows] = useState(() => {
-    const stored = localStorage.getItem("leftTableData");
-    return stored ? JSON.parse(stored) : leftTableData;
-  });
-
+  const [rightRows, setRightRows] = useStored("rightTableData", rightTableData);
+  const [leftRows, setLeftRows] = useStored("leftTableData", leftTableData);
   const [confirm, setConfirm] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem("rightTableData", JSON.stringify(rightRows));
-    localStorage.setItem("leftTableData", JSON.stringify(leftRows));
-  }, [rightRows, leftRows]);
+ 
 
   const handleDragStart = (e, row) => {
     e.dataTransfer.setData("application/json", JSON.stringify(row));
   };
-
+ 
   const handleReset = () => {
     localStorage.removeItem("rightTableData");
     setRightRows(rightTableData);
